@@ -64,3 +64,22 @@ def test_post_event_naive_timestamp_rejected(client: TestClient) -> None:
     payload = _valid_payload() | {"timestamp": "2026-05-14T10:00:00"}
     response = client.post("/events", json=payload)
     assert response.status_code == 422
+
+
+def test_debug_last_events_returns_recent(client: TestClient) -> None:
+    payload = {
+        "model_id": "claude-opus-4-7",
+        "tenant_id": "tenant-a",
+        "tokens_in": 100,
+        "tokens_out": 50,
+        "timestamp": "2026-05-15T10:00:00Z",
+    }
+    client.post("/events", json=payload)
+    client.post("/events", json={**payload, "tenant_id": "tenant-b"})
+
+    response = client.get("/debug/last-events?limit=10")
+    assert response.status_code == 200
+    events = response.json()
+    assert len(events) >= 2
+
+    assert events[0]["tenant_id"] == "tenant-b"
