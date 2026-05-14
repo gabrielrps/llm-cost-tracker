@@ -1,7 +1,8 @@
 """FastAPI application for the LLM Cost Tracker."""
 
-from fastapi import FastAPI
 from collections import deque
+
+from fastapi import FastAPI
 
 from llm_cost_tracker.schemas import EventAccepted, EventIn
 
