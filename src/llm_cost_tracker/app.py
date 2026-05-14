@@ -14,6 +14,7 @@ app = FastAPI(
 
 _recent_events: deque[EventIn] = deque(maxlen=50)
 
+
 @app.get("/health")
 async def health() -> dict[str, str]:
     return {"status": "ok"}
